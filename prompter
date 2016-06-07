@@ -1,0 +1,19 @@
+#!/bin/sh
+
+: "${PROMPT_DELAY_SECS:=300}"
+: "${LOG_DIR:="$HOME/.prompter"}"
+
+mkdir -p -- "$LOG_DIR"
+
+while sleep "$PROMPT_DELAY_SECS"; do
+    filename=$LOG_DIR/$(date +%Y%m%d)
+    input=$(
+        zenity --entry --text \
+            "What did you do in the last $PROMPT_DELAY_SECS seconds?"
+    )
+    ts=$(date +'[%Y-%m-%d %H:%M:%S]')
+
+    if [ -n "$input" ] && [ "$input" != same ]; then
+        printf '%s %s\n' "$ts" "$input" >> "$filename"
+    fi
+done
