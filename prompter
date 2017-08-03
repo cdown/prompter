@@ -1,6 +1,6 @@
 #!/bin/sh
 
-: "${PROMPT_DELAY_SECS:=300}"
+: "${PROMPT_DELAY_SECS:=900}"
 : "${LOG_DIR:="$HOME/.prompter"}"
 
 mkdir -p -- "$LOG_DIR"
