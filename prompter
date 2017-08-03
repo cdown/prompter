@@ -1,19 +1,26 @@
-#!/bin/sh
+#!/bin/bash
 
 : "${PROMPT_DELAY_SECS:=900}"
 : "${LOG_DIR:="$HOME/.prompter"}"
 
 mkdir -p -- "$LOG_DIR"
 
+trello_done=0
+
 while sleep "$PROMPT_DELAY_SECS"; do
     filename=$LOG_DIR/$(date +%Y%m%d)
-    input=$(
-        zenity --entry --text \
-            "What did you do in the last $PROMPT_DELAY_SECS seconds?"
-    )
+    msg="What did you do in the last $PROMPT_DELAY_SECS seconds?"
+
+    if [[ trello_done != "$(date +%F)" ]]; then
+        msg+="\n!!! TRELLO NOT DONE !!!\nIf done, enter 'trello'"
+    fi
+
+    input=$(zenity --entry --text "$msg")
     ts=$(date +'[%Y-%m-%d %H:%M:%S]')
 
-    if [ -n "$input" ] && [ "$input" != same ]; then
-        printf '%s %s\n' "$ts" "$input" >> "$filename"
-    fi
+    case $input in
+        ''|same) : ;; # Same as last, don't print
+        *[Tt]rello*) trello_done=$(date +%F) ;;
+        *) printf '%s %s\n' "$ts" "$input" >> "$filename" ;;
+    esac
 done
