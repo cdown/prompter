@@ -3,7 +3,10 @@
 : "${PROMPT_DELAY_SECS:=900}"
 : "${LOG_DIR:="$HOME/.prompter"}"
 : "${WORK_START_HOUR:=10}"
-: "${WORK_END_HOUR:=18}"
+: "${WORK_END_HOUR:=17}"
+: "${WORK_START_DAY:=1}"
+: "${WORK_END_DAY:=5}"
+
 
 mkdir -p -- "$LOG_DIR"
 
@@ -11,8 +14,11 @@ trello_done=0
 
 while sleep "$PROMPT_DELAY_SECS"; do
     current_hour=$(date +%H)
+    current_day=$(date +%u)
     if (( current_hour < WORK_START_HOUR )) ||
-       (( current_hour > WORK_END_HOUR )); then
+       (( current_hour > WORK_END_HOUR )) ||
+       (( current_day < WORK_START_DAY )) ||
+       (( current_day > WORK_END_DAY )); then
         continue
     fi
 
